@@ -60,20 +60,22 @@ def ativar(nome_planilha:str,ativo,nome:str,telefone:str):
     return(planilha(salvo=ativo,coluna_nome=column_nome,coluna_telefone=column_tel,nome_planilha=nome_planilha))
 
 def juntar(envia:classmethod,recebe:classmethod,linha:int) -> None:
-    for i in range (1, recebe.max_row):
-        if envia.ativa.cell(row=linha,column=envia.nome).value == recebe.ativa.cell(row=i,column=recebe.nome).value:
-            return
-        if recebe.ativa.cell(row=i,column=recebe.nome).value == "null":
-            for h in range(1,recebe.ativa.cell.max_column):
-                recebe.ativa.cell(row=i,column=h).value = envia.ativa.cell(row=linha,column=h).value
-            return
-    for h in range(1,recebe.ativa.cell.max_column):    
-        recebe.ativa.cell(row=(recebe.max_row+1),column=h).value = envia.ativa.cell(row=linha,column=h).value
+    try:
+        for i in range (1, recebe.ativa.max_row):
+            if envia.ativa.cell(row=linha,column=envia.nome).value == recebe.ativa.cell(row=i,column=recebe.nome).value:
+                return
+            if recebe.ativa.cell(row=i,column=recebe.nome).value == "none" or recebe.ativa.cell(row=i,column=recebe.nome).value == None:
+                for h in range(1,recebe.ativa.cell.max_column):
+                    recebe.ativa.cell(row=i,column=h).value = envia.ativa.cell(row=linha,column=h).value
+                return
+        for h in range(1,recebe.ativa.cell.max_column):    
+            recebe.ativa.cell(row=(recebe.ativa.max_row+1),column=h).value = envia.ativa.cell(row=linha,column=h).value
+    except Exception as e:
+        print(e)
     
 nome_planilha = []
 nome_plan = input("Informe o nome da planilha: ")
 while valida_Planilha(valor=nome_plan,planilhas=nome_planilha) == False:
-    load_workbook("Clientes 02.xlsx")
     nome_plan = input("Informe o nome da planilha: ")
 nome_planilha.append(nome_plan)
     
@@ -88,41 +90,39 @@ principal = ativar(nome_planilha=nome_plan,ativo=load_workbook(f"{nome_plan}.xls
 for i in range (1, principal.ativa.max_row+1):
     principal.deleta_Duplicado(linha=i)
 
-principal.salvar_Planilha()
-
-principal = ativar(nome_planilha=nome_plan,ativo=load_workbook(f"{nome_plan}_copia.xlsx"),nome=nome,telefone=telefone)
-
-sair = ""
-while True:
-    nome_plan = input("Informe o nome da planilha, Digite \"Sair\" para finalizar a aplicação: ")
-    if nome_plan.upper == "SAIR":
-        break
-    
-    while valida_Planilha(valor=nome_plan,planilhas=nome_planilha) == False:
+principal.salvar_Planilha("")
+try:
+    sair = ""
+    while True:
         nome_plan = input("Informe o nome da planilha, Digite \"Sair\" para finalizar a aplicação: ")
-        if nome_plan.upper == "SAIR":
+        if nome_plan == "Sair":
             break
-    if nome_plan.upper == "SAIR":
-        break
-    nome_planilha.append(nome_plan)
         
-    nome = ""
-    telefone = ""
-    while valida_TeleNome(ativo=load_workbook(f"{nome_plan}.xlsx").active ,nome=nome,telefone=telefone) == False:
-        nome = input("Informe qual o nome da Coluna Nome: ")
-        telefone = input("Informe o nome da coluna telefone: ")
+        while valida_Planilha(valor=nome_plan,planilhas=nome_planilha) == False:
+            nome_plan = input("Informe o nome da planilha, Digite \"Sair\" para finalizar a aplicação: ")
+            if nome_plan == "Sair":
+                break
+        if nome_plan == "Sair":
+            break
+        nome_planilha.append(nome_plan)
+            
+        nome = ""
+        telefone = ""
+        while valida_TeleNome(ativo=load_workbook(f"{nome_plan}.xlsx").active ,nome=nome,telefone=telefone) == False:
+            nome = input("Informe qual o nome da Coluna Nome: ")
+            telefone = input("Informe o nome da coluna telefone: ")
+            
+        secundario = ativar(nome_planilha=nome_plan,ativo=load_workbook(f"{nome_plan}.xlsx"),nome=nome,telefone=telefone)
+
+        for i in range (1, secundario.ativa.max_row+1):
+            secundario.deleta_Duplicado(linha=i)
+
+        secundario.salvar_Planilha("")
         
-    secundario = ativar(nome_planilha=nome_plan,ativo=load_workbook(f"{nome_plan}.xlsx"),nome=nome,telefone=telefone)
-
-    for i in range (1, secundario.ativa.max_row+1):
-        secundario.deleta_Duplicado(linha=i)
-
-    secundario.salvar_Planilha()
-    
-    secundario = ativar(nome_planilha=nome_plan,ativo=load_workbook(f"{nome_plan}_copia.xlsx"),nome=nome,telefone=telefone)
-    
-    for i in range (1, secundario.ativa.max_row):
-        if secundario.ativa.cell(row=i,column=secundario.nome).value != "null":
-            juntar(envia=secundario,recebe=principal,linha=i)
-    
-    principal.salvar_Planilha("Teste")
+        for i in range (1, secundario.ativa.max_row):
+            if secundario.ativa.cell(row=i,column=secundario.nome).value != "null":
+                juntar(envia=secundario,recebe=principal,linha=i)
+        
+        principal.salvar_Planilha("Teste")
+except Exception as e:
+    print(e)
