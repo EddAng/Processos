@@ -21,7 +21,7 @@ class planilha:
         if nome == "":
             self.salvo.save(f"{self.planilha_nome}_copia.xlsx")
         else:
-            self.salvo.save(f"{nome}_copia.xlsx")
+            self.salvo.save(f"{nome}.xlsx")
 def valida_Planilha(valor:str,planilhas:list) -> bool:
     try:
         if len(planilhas) > 0:
@@ -60,18 +60,17 @@ def ativar(nome_planilha:str,ativo,nome:str,telefone:str):
     return(planilha(salvo=ativo,coluna_nome=column_nome,coluna_telefone=column_tel,nome_planilha=nome_planilha))
 
 def juntar(envia:classmethod,recebe:classmethod,linha:int) -> None:
-    try:
-        for i in range (1, recebe.ativa.max_row):
-            if envia.ativa.cell(row=linha,column=envia.nome).value == recebe.ativa.cell(row=i,column=recebe.nome).value:
-                return
-            if recebe.ativa.cell(row=i,column=recebe.nome).value == "none" or recebe.ativa.cell(row=i,column=recebe.nome).value == None:
-                for h in range(1,recebe.ativa.cell.max_column):
-                    recebe.ativa.cell(row=i,column=h).value = envia.ativa.cell(row=linha,column=h).value
-                return
-        for h in range(1,recebe.ativa.cell.max_column):    
-            recebe.ativa.cell(row=(recebe.ativa.max_row+1),column=h).value = envia.ativa.cell(row=linha,column=h).value
-    except Exception as e:
-        print(e)
+
+    for i in range (1, recebe.ativa.max_row):
+        if envia.ativa.cell(row=linha,column=envia.nome).value == recebe.ativa.cell(row=i,column=recebe.nome).value:
+            return
+        if recebe.ativa.cell(row=i,column=recebe.nome).value == "none" or recebe.ativa.cell(row=i,column=recebe.nome).value == None:
+            for h in range(1,recebe.ativa.max_column):
+                recebe.ativa.cell(row=i,column=h).value = envia.ativa.cell(row=linha,column=h).value
+            return
+    for h in range(1,recebe.ativa.max_column):    
+        recebe.ativa.cell(row=(recebe.ativa.max_row),column=h).value = envia.ativa.cell(row=linha,column=h).value
+        recebe.ativa.cell(row=(recebe.ativa.max_row+1),column=h).value = ""
     
 nome_planilha = []
 nome_plan = input("Informe o nome da planilha: ")
@@ -79,8 +78,8 @@ while valida_Planilha(valor=nome_plan,planilhas=nome_planilha) == False:
     nome_plan = input("Informe o nome da planilha: ")
 nome_planilha.append(nome_plan)
     
-nome = ""
-telefone = ""
+nome = "Nome / Nome Fantasia"
+telefone = "Tel Celular"
 while valida_TeleNome(ativo=load_workbook(f"{nome_plan}.xlsx").active ,nome=nome,telefone=telefone) == False:
     nome = input("Informe qual o nome da Coluna Nome: ")
     telefone = input("Informe o nome da coluna telefone: ")
@@ -106,8 +105,8 @@ try:
             break
         nome_planilha.append(nome_plan)
             
-        nome = ""
-        telefone = ""
+        nome = "Nome / Nome Fantasia"
+        telefone = "Tel Celular"
         while valida_TeleNome(ativo=load_workbook(f"{nome_plan}.xlsx").active ,nome=nome,telefone=telefone) == False:
             nome = input("Informe qual o nome da Coluna Nome: ")
             telefone = input("Informe o nome da coluna telefone: ")
@@ -122,7 +121,7 @@ try:
         for i in range (1, secundario.ativa.max_row):
             if secundario.ativa.cell(row=i,column=secundario.nome).value != "null":
                 juntar(envia=secundario,recebe=principal,linha=i)
-        
-        principal.salvar_Planilha("Teste")
+                
+        principal.salvar_Planilha(input("Informe o nome da planilha"))
 except Exception as e:
     print(e)
