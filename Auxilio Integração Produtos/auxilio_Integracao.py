@@ -61,7 +61,16 @@ def entra_Planilha(planilhas,planilha,integracao):
             return tipo
         
 def codigo(integracao,tipo, id):
-    if integracao.upper() == "IFOOD":
+    if integracao.upper() == "MULTIPEDIDOS":
+        if tipo == "Sabor":
+            return id
+        elif tipo == "Produto":
+            return id
+        elif tipo == "Adicional":
+            return id
+        elif tipo == "Pizza":
+            return id
+    elif integracao.upper() == "IFOOD":
         if tipo == "Sabor":
             return "S"+str(id)
         elif tipo == "Produto":
@@ -81,8 +90,8 @@ def codigo(integracao,tipo, id):
             return id
     
 integracao = ""
-while integracao.upper() != "IFOOD" and integracao.upper() != "ANOTA AI":
-    integracao = input("Informe o tipo da integração (Ifood, Anota Ai): ")
+while integracao.upper() != "IFOOD" and integracao.upper() != "ANOTA AI" and integracao.upper() != "MULTIPEDIDOS":
+    integracao = input("Informe o tipo da integração (Ifood, Anota Ai, Multipedidos): ")
 
 planilhas = []
 
