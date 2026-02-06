@@ -1,2 +1,2 @@
 # Processos
- Ferramentas utilizadas para agilizar processos feitos no dia a dia
+ Vincule uma planilha dos clientes da base atual e vincule uma planilha de clientes de uma base a adicionar, o aplicativo vai criar duas listas, comparar os números de telefones que não podem estar duplicados e criar um txt separando os dados dos clientes por "-" para que na leitura no excel possa separar por esse caractere.
